@@ -1,0 +1,188 @@
+!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Cuestionario de Opinión - Arcade</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #fceabb, #f8b500);
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      background: white;
+      max-width: 800px;
+      margin: auto;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+
+    p {
+      font-weight: bold;
+      margin-top: 20px;
+    }
+
+    label, textarea, input[type="text"] {
+      display: block;
+      margin-top: 8px;
+      margin-bottom: 10px;
+      font-size: 15px;
+    }
+
+    textarea, input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+    }
+
+    .checkbox-group label {
+      display: inline-block;
+      margin-right: 15px;
+    }
+
+    .form-section {
+      margin-bottom: 20px;
+    }
+
+    button {
+      background: #ff6600;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      font-size: 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 20px;
+    }
+
+    button:hover {
+      background: #e05500;
+    }
+
+    canvas {
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Cuestionario de Opinión sobre el Arcade</h2>
+  <form id="formArcade">
+
+    <div class="form-section">
+      <p>1. ¿Cómo calificarías tu experiencia general en nuestro arcade?</p>
+      <label><input type="radio" name="experiencia" value="Excelente"> Excelente</label>
+      <label><input type="radio" name="experiencia" value="Buena"> Buena</label>
+      <label><input type="radio" name="experiencia" value="Regular"> Regular</label>
+      <label><input type="radio" name="experiencia" value="Mala"> Mala</label>
+    </div>
+
+    <div class="form-section">
+      <p>2. ¿Qué fue lo que más te gustó?</p>
+      <div class="checkbox-group">
+        <label><input type="checkbox" name="gusto" value="Variedad de juegos"> Variedad de consolas/juegos</label>
+        <label><input type="checkbox" name="gusto" value="Atención del personal"> Atención del personal</label>
+        <label><input type="checkbox" name="gusto" value="Precios"> Precios</label>
+        <label><input type="checkbox" name="gusto" value="Ambiente y decoración"> Ambiente y decoración</label>
+        <label><input type="checkbox" name="gusto" value="Otro"> Otro: <input type="text" name="otroGusto"></label>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <p>3. ¿Qué aspectos crees que podríamos mejorar?</p>
+      <textarea name="mejoras" rows="3"></textarea>
+    </div>
+
+    <div class="form-section">
+      <p>4. ¿Con qué frecuencia nos visitas?</p>
+      <label><input type="radio" name="frecuencia" value="Primera vez"> Es mi primera vez</label>
+      <label><input type="radio" name="frecuencia" value="Mensual"> Una vez al mes</label>
+      <label><input type="radio" name="frecuencia" value="Varias al mes"> Varias veces al mes</label>
+      <label><input type="radio" name="frecuencia" value="Casi diario"> Casi todos los días</label>
+    </div>
+
+    <div class="form-section">
+      <p>5. ¿Cómo te enteraste de nuestro arcade?</p>
+      <label><input type="radio" name="medio" value="Redes sociales"> Redes sociales</label>
+      <label><input type="radio" name="medio" value="Amigo"> Recomendación de un amigo</label>
+      <label><input type="radio" name="medio" value="Paso por el lugar"> Paso por el lugar</label>
+      <label><input type="radio" name="medio" value="Publicidad"> Publicidad</label>
+      <label><input type="radio" name="medio" value="Otro"> Otro: <input type="text" name="otroMedio"></label>
+    </div>
+
+    <div class="form-section">
+      <p>6. ¿Qué tipo de juegos o consolas te gustaría ver en el futuro?</p>
+      <textarea name="futuro" rows="2"></textarea>
+    </div>
+
+    <div class="form-section">
+      <p>7. ¿Te gustaría que ofrezcamos más servicios?</p>
+      <textarea name="servicios" rows="2"></textarea>
+    </div>
+
+    <div class="form-section">
+      <p>8. ¿Tienes alguna otra sugerencia o comentario para mejorar nuestro arcade?</p>
+      <textarea name="comentarios" rows="3"></textarea>
+    </div>
+
+    <button type="submit">Enviar Opinión</button>
+  </form>
+
+  <canvas id="graficoExperiencia" height="100"></canvas>
+</div>
+
+<script>
+  const datosExperiencia = {
+    Excelente: 0,
+    Buena: 0,
+    Regular: 0,
+    Mala: 0
+  };
+
+  const ctx = document.getElementById("graficoExperiencia").getContext("2d");
+  const grafico = new Chart(ctx, {
+    type: "pie",
+    data: {
+      labels: ["Excelente", "Buena", "Regular", "Mala"],
+      datasets: [{
+        data: [0, 0, 0, 0],
+        backgroundColor: ["#4caf50", "#2196f3", "#ff9800", "#f44336"]
+      }]
+    },
+    options: {
+      responsive: true
+    }
+  });
+
+  document.getElementById("formArcade").addEventListener("submit", function(e) {
+    e.preventDefault();
+    const experiencia = document.querySelector("input[name='experiencia']:checked");
+    if (experiencia) {
+      datosExperiencia[experiencia.value]++;
+      grafico.data.datasets[0].data = [
+        datosExperiencia.Excelente,
+        datosExperiencia.Buena,
+        datosExperiencia.Regular,
+        datosExperiencia.Mala
+      ];
+      grafico.update();
+    }
+    alert("¡Gracias por tu opinión!");
+    this.reset();
+  });
+</script>
+
+</body>
+</html>
